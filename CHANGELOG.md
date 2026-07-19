@@ -7,10 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org) and
 ## [0.1.2] - 2026-07-19
 
 ### Bug Fixes
-- **events:** `Amount` now serializes ALWAYS as a decimal string (every value, small or large) so a
-  JS/TS consumer reads it as one `bigint` — one code path, no precision loss past
-  `Number.MAX_SAFE_INTEGER`. Deserialization accepts the canonical string and, leniently, a bare
-  number. Aligns the extracted crate with the JS-safe-integer contract of its extraction source (#1112).
+- **events:** Amount JS-safe-integer serde to match extraction source (#1112) (#2)
 
 ## [0.1.1] - 2026-07-19
 

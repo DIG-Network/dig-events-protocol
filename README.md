@@ -106,7 +106,7 @@ Three thin newtypes so the wire is a bare value, not a tagged object:
 
 ```rust
 pub struct WalletId(pub u32);     // wallet identifier (wire: bare u32)
-pub struct Amount(pub u64);        // on-chain value in mojos (wire: bare u64)
+pub struct Amount(pub u64);        // on-chain value in mojos (wire: ALWAYS a decimal string; JS = BigInt)
 pub struct AssetId(pub String);    // CAT tail hash, hex (wire: bare string)
 ```
 
@@ -157,7 +157,10 @@ Retains only events whose `kind()` is in the filter, preserving cursor order. En
 - **Event tagging:** `#[serde(tag = "type", rename_all = "snake_case")]`
 - **Kind filter list:** `["event_kind_one","event_kind_two"]` (snake_case, sorted)
 - **Cursor:** Bare `u64` on wire, monotonic increasing per instance
-- **Amounts:** `u64` in mojos (smallest indivisible unit)
+- **Amounts:** `u64` in mojos (smallest indivisible unit); serialized ALWAYS as a decimal string
+  (every value, small or large) so a JS/TS consumer reads it as one `bigint` (`BigInt(str)`) — one
+  code path, no `typeof` branch, and no precision loss past `Number.MAX_SAFE_INTEGER`. Deserialization
+  accepts the canonical decimal string and, leniently, a bare JSON number.
 - **Timestamps:** None on the wire itself (events carry heights, not absolute times; time mapping is app-layer)
 
 ## Usage

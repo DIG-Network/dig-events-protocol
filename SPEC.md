@@ -24,8 +24,10 @@ associated type so the leaf carries no error dependency. `#![forbid(unsafe_code)
 ## §3. Payload newtypes
 
 - `WalletId(pub u32)` — wallet identifier. Wire: bare JSON number.
-- `Amount(pub u64)` — value in the smallest unit (mojos); `.mojos()` reads the raw value. Wire: bare
-  JSON number.
+- `Amount(pub u64)` — value in the smallest unit (mojos); `.mojos()` reads the raw value. Wire: ALWAYS
+  a decimal JSON string (every value, small or large), so a JS/TS consumer maps it to one `bigint` via
+  `BigInt(str)` — one code path, no precision loss past `Number.MAX_SAFE_INTEGER`. Deserialization MUST
+  accept the canonical decimal string and, leniently, a bare JSON number; serialization MUST emit a string.
 - `AssetId(pub String)` — a CAT TAIL hash, hex. On an event's `asset` field, `Some` = a CAT and
   `None` = native XCH. Wire: bare JSON string.
 

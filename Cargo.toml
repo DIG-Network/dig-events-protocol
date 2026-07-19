@@ -12,7 +12,7 @@
 # leaf needs no error dependency). Every consumer — node engine, apps, tooling — can depend on it.
 [package]
 name = "dig-events-protocol"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 rust-version = "1.75.0"
 license = "Apache-2.0 OR MIT"

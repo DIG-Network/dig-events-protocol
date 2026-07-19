@@ -58,7 +58,7 @@ fn funds_received_golden() {
         confirmed_height: height,
     };
     let expected = format!(
-        "{{\"type\":\"funds_received\",\"wallet_id\":{wallet},\"asset\":null,\"amount\":{amount},\"coin_id\":\"{coin}\",\"confirmed_height\":{height}}}"
+        "{{\"type\":\"funds_received\",\"wallet_id\":{wallet},\"asset\":null,\"amount\":\"{amount}\",\"coin_id\":\"{coin}\",\"confirmed_height\":{height}}}"
     );
     assert_golden(&event, &expected);
 }
@@ -80,7 +80,7 @@ fn funds_sent_golden() {
         confirmed_height: height,
     };
     let expected = format!(
-        "{{\"type\":\"funds_sent\",\"wallet_id\":{wallet},\"asset\":\"{tail}\",\"amount\":{amount},\"tx_id\":\"{tx}\",\"confirmed_height\":{height}}}"
+        "{{\"type\":\"funds_sent\",\"wallet_id\":{wallet},\"asset\":\"{tail}\",\"amount\":\"{amount}\",\"tx_id\":\"{tx}\",\"confirmed_height\":{height}}}"
     );
     assert_golden(&event, &expected);
 }

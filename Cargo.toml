@@ -1,0 +1,39 @@
+# dig-events-protocol — the canonical blockchain→app event CONTRACT for the DIG Network.
+#
+# ONE ecosystem definition of the wallet/chain event taxonomy that the node/wallet engine EMITS and
+# apps (dig-app) SUBSCRIBE to. Only the CONTRACT lives here — the wire types (`WalletEvent`,
+# `EventKind`, `Cursor`, `EmittedEvent`, `SyncStatus`) and the two shape traits (`EventEmitter`,
+# `CatchUp`). The machinery that produces/persists/streams events (the event bus, catch-up store,
+# live subscriptions) STAYS in the engine (dig-wallet-backend); this crate is the drift-freeze so a
+# second implementation matches byte-for-byte.
+#
+# LEAF CRATE by design: deps are serde + enumset + async-trait ONLY — NO `dig-*` dependencies, NO
+# tokio, NO error/transport crates (the `CatchUp` error type is a generic associated type, so the
+# leaf needs no error dependency). Every consumer — node engine, apps, tooling — can depend on it.
+[package]
+name = "dig-events-protocol"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75.0"
+license = "Apache-2.0 OR MIT"
+description = "Canonical DIG Network blockchain→app event contract: the wallet/chain event taxonomy (WalletEvent, EventKind, Cursor, EmittedEvent, SyncStatus) plus the EventEmitter/CatchUp shape traits that the node engine emits and apps subscribe to — a pure leaf crate (serde + enumset + async-trait, no dig-* deps) that freezes the event wire format against drift."
+repository = "https://github.com/DIG-Network/dig-events-protocol"
+readme = "README.md"
+keywords = ["events", "wallet", "chia", "dig", "protocol"]
+categories = ["data-structures", "encoding"]
+
+[dependencies]
+# Wire (de)serialization: every contract type is (de)serializable; WalletEvent is `tag = "type"`
+# snake_case, EventKind serializes as a snake_case list.
+serde = { version = "1", features = ["derive"] }
+# The EnumSet<EventKind> subscription filter (list-serialized) and the derive.
+enumset = { version = "1", features = ["serde"] }
+# `CatchUp` is an async trait; async-trait keeps the contract object-safe on stable Rust without
+# pulling in a runtime (no tokio) — the leaf stays runtime-agnostic.
+async-trait = "0.1"
+
+[dev-dependencies]
+# Golden-JSON conformance KATs: round-trip every WalletEvent variant + the EventKind list.
+serde_json = "1"
+# The KAT fixtures derive their non-literal bytes from a hashed seed (CodeQL: no literal crypto
+# values in tests); a tiny stable hash suffices — no external crypto dependency needed.
